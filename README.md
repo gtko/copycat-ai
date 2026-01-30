@@ -86,7 +86,27 @@ Les secrets requis sont :
 - `JWT_SECRET` - Secret pour signer les JWT (générez une chaîne aléatoire)
 - `KIMI_API_KEY` - Clé API pour l'IA (ou `OPENAI_API_KEY`)
 
-### 3. Base de données D1
+### 3. Configuration Stripe (Produits & Webhooks)
+
+**Automatisé (recommandé)**
+
+```bash
+# Setup complet : produit, prix, webhook
+export STRIPE_SECRET_KEY=sk_test_...
+npm run setup:stripe
+```
+
+Ce script crée :
+- ✅ Produit "Copycat AI - Essai 48h"
+- ✅ Prix : 2,90€ trial puis 49,90€/28jours
+- ✅ Webhook endpoint
+- ✅ Sauvegarde du webhook secret
+
+**Manuel**
+
+Voir [docs/STRIPE.md](./docs/STRIPE.md) pour les instructions détaillées.
+
+### 4. Base de données D1
 
 ```bash
 # Créer la base de données
@@ -97,7 +117,7 @@ npm run db:create
 npm run db:schema
 ```
 
-### 4. Variables d'environnement
+### 5. Variables d'environnement
 
 ```bash
 # Copier le fichier d'exemple
@@ -105,7 +125,7 @@ cp .env.example .dev.vars
 # Éditer .dev.vars avec vos valeurs
 ```
 
-### 5. Lancer le serveur
+### 6. Lancer le serveur
 
 ```bash
 npm run dev
@@ -129,7 +149,19 @@ wrangler secret put JWT_SECRET
 wrangler secret put KIMI_API_KEY
 ```
 
-### 2. Variables dans wrangler.toml
+### 2. Configuration Stripe (Production)
+
+```bash
+# Créer les produits et webhooks en production
+export STRIPE_SECRET_KEY=sk_live_...
+export APP_URL=https://votre-domaine.com
+npm run setup:stripe:prod
+
+# Sauvegarder le webhook secret
+wrangler secret put STRIPE_WEBHOOK_SECRET
+```
+
+### 3. Variables dans wrangler.toml
 
 Éditer `wrangler.toml` et remplacer :
 - `STRIPE_PUBLISHABLE_KEY` - Clé publique Stripe (pk_live_...)
@@ -138,7 +170,7 @@ wrangler secret put KIMI_API_KEY
 - `APP_URL` - URL de votre application
 - `database_id` - ID de la base D1 créée
 
-### 3. Base de données D1 (Production)
+### 4. Base de données D1 (Production)
 
 ```bash
 # Créer la base de données de production
