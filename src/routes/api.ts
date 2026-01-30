@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { Env } from '../index';
+import type { Env, User } from '../index';
 
 const app = new Hono<Env>();
 
@@ -13,7 +13,7 @@ app.use('*', async (c, next) => {
   
   const user = await c.env.DB.prepare(
     'SELECT u.id, u.email, u.subscription_status, u.trial_end_date FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.id = ? AND s.expires_at > datetime("now")'
-  ).bind(sessionId).first();
+  ).bind(sessionId).first<User>();
   
   if (!user) {
     return c.json({ error: 'Session invalide' }, 401);
@@ -49,7 +49,7 @@ app.post('/generate', async (c) => {
   // Save to database
   const result = await c.env.DB.prepare(
     'INSERT INTO business_plans (user_id, title, content, business_name, industry) VALUES (?, ?, ?, ?, ?) RETURNING id'
-  ).bind(user.id, `Plan d'affaires - ${businessName}`, JSON.stringify(planContent), businessName, industry).first();
+  ).bind(user.id, `Plan d'affaires - ${businessName}`, JSON.stringify(planContent), businessName, industry).first<{ id: number }>();
   
   return c.json({ 
     success: true, 
@@ -150,7 +150,7 @@ Format: JSON avec les clés : executiveSummary, companyDescription, marketAnalys
     });
     
     const result = await response.json();
-    const content = result.choices?.[0]?.message?.content;
+    const content = (result as any).choices?.[0]?.message?.content;
     
     if (content) {
       try {

@@ -13,6 +13,14 @@ import { landingPage } from './pages/landing';
 import { checkoutPage } from './pages/checkout';
 import { appPage } from './pages/app';
 
+export type User = {
+  id: number;
+  email: string;
+  name?: string;
+  subscription_status?: string;
+  trial_end_date?: string;
+};
+
 export type Env = {
   Bindings: {
     DB: D1Database;
@@ -27,7 +35,7 @@ export type Env = {
     APP_URL: string;
   };
   Variables: {
-    user: { id: number; email: string } | null;
+    user: User;
   };
 };
 

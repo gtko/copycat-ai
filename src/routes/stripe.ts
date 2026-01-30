@@ -10,13 +10,13 @@ app.post('/checkout', async (c) => {
   const { email, name } = await c.req.json();
   
   // Get or create user
-  let user = await c.env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(email).first();
+  let user = await c.env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(email).first<{ id: number; email: string; name: string | null }>();
   
   if (!user) {
     const result = await c.env.DB.prepare(
       'INSERT INTO users (email, name) VALUES (?, ?) RETURNING id'
-    ).bind(email, name).first();
-    user = { id: result?.id, email, name };
+    ).bind(email, name).first<{ id: number }>();
+    user = { id: result!.id, email, name };
   }
   
   // Create Stripe customer
@@ -72,7 +72,7 @@ app.post('/portal', async (c) => {
   
   const user = await c.env.DB.prepare(
     'SELECT stripe_customer_id FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.id = ?'
-  ).bind(sessionId).first();
+  ).bind(sessionId).first<{ stripe_customer_id: string }>();
   
   if (!user?.stripe_customer_id) {
     return c.json({ error: 'Pas de customer Stripe' }, 400);
@@ -127,7 +127,7 @@ app.post('/webhook', async (c) => {
       
       const user = await c.env.DB.prepare(
         'SELECT id FROM users WHERE subscription_id = ?'
-      ).bind(subscriptionId).first();
+      ).bind(subscriptionId).first<{ id: number }>();
       
       if (user) {
         await c.env.DB.prepare(
@@ -143,7 +143,7 @@ app.post('/webhook', async (c) => {
       
       const user = await c.env.DB.prepare(
         'SELECT id FROM users WHERE subscription_id = ?'
-      ).bind(subscriptionId).first();
+      ).bind(subscriptionId).first<{ id: number }>();
       
       if (user) {
         await c.env.DB.prepare(
@@ -158,7 +158,7 @@ app.post('/webhook', async (c) => {
       
       const user = await c.env.DB.prepare(
         'SELECT id FROM users WHERE subscription_id = ?'
-      ).bind(subscription.id).first();
+      ).bind(subscription.id).first<{ id: number }>();
       
       if (user) {
         await c.env.DB.prepare(
