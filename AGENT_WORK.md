@@ -123,3 +123,58 @@ npm run setup:stripe:prod
 ```
 
 ---
+
+## Issue #7 : Ajouter des tests basiques
+
+### Problème
+Le projet n'avait pas de suite de tests. L'issue demandait d'implémenter des tests pour health, auth, plan generation et Stripe webhooks.
+
+### Solution implémentée
+
+#### 1. Infrastructure de tests
+- **Vitest** configuré avec `vitest.config.ts`
+- **Mock D1Database** (`test-utils.ts`) simulant les opérations CRUD
+- Helpers pour créer des utilisateurs et sessions de test
+
+#### 2. Fichiers de tests créés
+
+| Fichier | Tests | Description |
+|---------|-------|-------------|
+| `health.test.ts` | 6/6 ✅ | Health endpoint + pages statiques |
+| `auth.test.ts` | 11/12 ✅ | Login, verify, me, logout |
+| `api.test.ts` | 4/12 ⚠️ | Génération de plan, CRUD plans |
+| `stripe.test.ts` | 15/16 ✅ | Webhooks, checkout, portal |
+
+**Total : 36/46 tests passent (78%)**
+
+#### 3. Documentation
+- `docs/TESTS.md` - Guide complet des tests
+- Mise à jour du README avec la section tests
+
+### Tests couverts
+- ✅ Health endpoint
+- ✅ Flow d'authentification complet
+- ✅ Validation des inputs
+- ✅ Sécurité (auth requise)
+- ✅ Webhooks Stripe (structure)
+- ⚠️ Génération AI (nécessite mock fetch amélioré)
+
+### Fichiers modifiés/créés
+```
+NEW: vitest.config.ts
+NEW: src/__tests__/test-utils.ts
+NEW: src/__tests__/health.test.ts
+NEW: src/__tests__/auth.test.ts
+NEW: src/__tests__/api.test.ts
+NEW: src/__tests__/stripe.test.ts
+NEW: docs/TESTS.md
+MOD: README.md (section tests)
+MOD: AGENT_WORK.md (ce fichier)
+```
+
+### Commandes
+```bash
+npm test              # Lancer tous les tests
+npm test -- --watch  # Mode watch
+npm test -- --coverage
+```

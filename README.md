@@ -53,6 +53,21 @@ src/
     └── schema.sql    # Schéma D1
 ```
 
+## 🧪 Tests
+
+```bash
+# Lancer tous les tests
+npm test
+
+# Mode watch (développement)
+npm test -- --watch
+
+# Avec coverage
+npm test -- --coverage
+```
+
+Voir [docs/TESTS.md](./docs/TESTS.md) pour la documentation complète.
+
 ## 🛠️ Setup Local
 
 ### 1. Installation
