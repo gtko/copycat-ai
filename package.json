@@ -9,7 +9,10 @@
     "build": "esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js --platform=neutral",
     "db:create": "wrangler d1 create copycat-ai-db",
     "db:migrate": "wrangler d1 migrations apply copycat-ai-db",
-    "db:schema": "wrangler d1 execute copycat-ai-db --file=./src/db/schema.sql",
+    "db:schema": "wrangler d1 execute copycat-ai-db --file=./src/db/schema.sql --local",
+    "db:schema:prod": "wrangler d1 execute copycat-ai-db --file=./src/db/schema.sql",
+    "setup:secrets": "./scripts/setup-secrets.sh --local",
+    "setup:secrets:prod": "./scripts/setup-secrets.sh --production",
     "typecheck": "tsc --noEmit",
     "test": "vitest"
   },

@@ -55,38 +55,113 @@ src/
 
 ## 🛠️ Setup Local
 
-```bash
-# Installation
-npm install
+### 1. Installation
 
-# Configurer les secrets locaux
+```bash
+npm install
+```
+
+### 2. Configuration des Secrets
+
+**Option A : Script automatisé (recommandé)**
+
+```bash
+# Configuration interactive de tous les secrets
+./scripts/setup-secrets.sh --local
+```
+
+**Option B : Manuellement**
+
+```bash
+# Configurer les secrets un par un
+wrangler secret put STRIPE_SECRET_KEY --local
+wrangler secret put STRIPE_WEBHOOK_SECRET --local
+wrangler secret put JWT_SECRET --local
+wrangler secret put KIMI_API_KEY --local
+```
+
+Les secrets requis sont :
+- `STRIPE_SECRET_KEY` - Clé secrète Stripe (sk_...)
+- `STRIPE_WEBHOOK_SECRET` - Secret webhook Stripe (whsec_...)
+- `JWT_SECRET` - Secret pour signer les JWT (générez une chaîne aléatoire)
+- `KIMI_API_KEY` - Clé API pour l'IA (ou `OPENAI_API_KEY`)
+
+### 3. Base de données D1
+
+```bash
+# Créer la base de données
+npm run db:create
+# Copier l'ID affiché dans wrangler.toml (champ database_id)
+
+# Appliquer le schéma
+npm run db:schema
+```
+
+### 4. Variables d'environnement
+
+```bash
+# Copier le fichier d'exemple
+cp .env.example .dev.vars
+# Éditer .dev.vars avec vos valeurs
+```
+
+### 5. Lancer le serveur
+
+```bash
+npm run dev
+# Ouvrir http://localhost:8787
+```
+
+## 🚀 Déploiement Production
+
+### 1. Secrets Cloudflare (Production)
+
+```bash
+# Configurer les secrets pour la production
+npm run setup:secrets:prod
+```
+
+Ou manuellement :
+```bash
 wrangler secret put STRIPE_SECRET_KEY
 wrangler secret put STRIPE_WEBHOOK_SECRET
 wrangler secret put JWT_SECRET
 wrangler secret put KIMI_API_KEY
+```
 
-# Créer la base de données D1
+### 2. Variables dans wrangler.toml
+
+Éditer `wrangler.toml` et remplacer :
+- `STRIPE_PUBLISHABLE_KEY` - Clé publique Stripe (pk_live_...)
+- `POSTHOG_KEY` - Clé PostHog
+- `BETTERSTACK_TOKEN` - Token BetterStack
+- `APP_URL` - URL de votre application
+- `database_id` - ID de la base D1 créée
+
+### 3. Base de données D1 (Production)
+
+```bash
+# Créer la base de données de production
 wrangler d1 create copycat-ai-db
 # Copier l'ID dans wrangler.toml
 
 # Appliquer le schéma
-wrangler d1 execute copycat-ai-db --file=./src/db/schema.sql
-
-# Démarrer le dev server
-npm run dev
+npm run db:schema:prod
 ```
 
-## 🚀 Déploiement
+### 4. Déploiement Automatique (GitHub Actions)
 
-Le déploiement est automatique via GitHub Actions sur chaque push sur `main`.
+Le déploiement est automatique sur chaque push sur `main`.
 
-### Secrets GitHub à configurer:
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `JWT_SECRET`
-- `KIMI_API_KEY`
+**Secrets GitHub requis** (Settings > Secrets and variables > Actions):
+| Secret | Description | Où le trouver |
+|--------|-------------|---------------|
+| `CLOUDFLARE_API_TOKEN` | Token API Cloudflare | [Cloudflare Tokens](https://dash.cloudflare.com/profile/api-tokens) |
+| `CLOUDFLARE_ACCOUNT_ID` | ID du compte Cloudflare | Dashboard > droite, Account ID |
+| `STRIPE_SECRET_KEY` | Clé secrète Stripe | [Stripe Dashboard](https://dashboard.stripe.com/apikeys) |
+| `STRIPE_WEBHOOK_SECRET` | Secret webhook | Stripe > Webhooks > Signing secret |
+| `JWT_SECRET` | Secret JWT | Générez: `openssl rand -base64 32` |
+| `KIMI_API_KEY` | Clé API Kimi | Dashboard Kimi |
 
 ## 📊 Monitoring
 
