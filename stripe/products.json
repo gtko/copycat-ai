@@ -1,0 +1,42 @@
+{
+  "trial_product": {
+    "name": "Copycat AI - Essai 48h",
+    "description": "Accès complet à Copycat AI pendant 48 heures, puis abonnement de 49,90€ tous les 28 jours. Annulation gratuite à tout moment.",
+    "metadata": {
+      "type": "trial_subscription",
+      "trial_hours": 48
+    }
+  },
+  "trial_price": {
+    "currency": "eur",
+    "unit_amount": 290,
+    "recurring": {
+      "interval": "day",
+      "interval_count": 28
+    },
+    "metadata": {
+      "display_price": "49.90",
+      "trial_price": "2.90",
+      "billing_period": "28 days"
+    }
+  },
+  "subscription_settings": {
+    "collection_method": "charge_automatically",
+    "default_tax_rates": [],
+    "payment_behavior": "default_incomplete",
+    "proration_behavior": "none"
+  },
+  "webhook_endpoints": [
+    {
+      "url": "/api/stripe/webhook",
+      "enabled_events": [
+        "checkout.session.completed",
+        "invoice.paid",
+        "invoice.payment_failed",
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted"
+      ]
+    }
+  ]
+}

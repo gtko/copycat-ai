@@ -1,0 +1,29 @@
+{
+  "name": "copycat-ai",
+  "version": "1.0.0",
+  "description": "AI Business Plan Generator - Venturekit clone",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js --platform=neutral",
+    "db:create": "wrangler d1 create copycat-ai-db",
+    "db:migrate": "wrangler d1 migrations apply copycat-ai-db",
+    "db:schema": "wrangler d1 execute copycat-ai-db --file=./src/db/schema.sql",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "hono": "^4.4.0",
+    "stripe": "^15.0.0",
+    "jose": "^5.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240605.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "wrangler": "^3.60.0"
+  },
+  "keywords": ["ai", "business-plan", "saas", "cloudflare-workers"]
+}
